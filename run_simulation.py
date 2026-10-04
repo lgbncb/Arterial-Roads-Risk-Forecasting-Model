@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import re
+import textwrap
 
 import pandas as pd
 
@@ -72,23 +73,50 @@ def choose_scenario():
 
 def show_results(result, year):
     frame = result.loc[result.Year.eq(year)].copy()
-    print(f"\nRESULTS: {result.Scenario.iat[0]} in {year}")
-    print("Road capacity is an illustrative estimate, not a measured limit.")
+    baseline = result.loc[result.Year.eq(2025), ["Road_ID_Name", "Total_Raw_Volume_Reported", "Road_PCU_Volume"]].set_index("Road_ID_Name")
     counts = frame.Risk_Level.value_counts().reindex(["Low", "Medium", "High"], fill_value=0)
-    print("Roads by risk:", ", ".join(f"{level}: {count}" for level, count in counts.items()))
-    print("Risk guide: Low = below 70% capacity; Medium = 70-<95%; High = 95% or more.")
-    print("Capacity used means projected traffic divided by the illustrative road capacity.")
-    print("AI risk is the Random Forest's estimate; Risk follows the stated capacity thresholds.")
-    print("AI/rule differences for this year:", int(frame.RF_Disagreement.sum()))
-    columns = ["Road_ID_Name", "Road_Type", "Road_PCU_Volume", "Capacity_Limit", "VC_Ratio", "Risk_Level", "RF_Risk_Level", "First_High_Year"]
-    shown = frame[columns].sort_values("VC_Ratio", ascending=False).copy()
-    shown["Road_PCU_Volume"] = shown.Road_PCU_Volume.round(0).astype(int)
-    shown["Capacity_Limit"] = shown.Capacity_Limit.round(0).astype(int)
-    shown["VC_Ratio"] = (shown.VC_Ratio * 100).map(lambda value: f"{value:.1f}%")
-    shown["First_High_Year"] = shown.First_High_Year.astype("string").fillna("Not by 2035")
-    shown.columns = ["Road", "Type", "Traffic PCU/day", "Capacity PCU/day", "Capacity used", "Risk", "AI risk", "First High year"]
-    print(shown.to_string(index=False))
-    print("First High year is the first modeled year at 95% capacity or more, not a measured failure year.")
+    width = 108
+
+    def border(char="-"):
+        return "+" + char * (width - 2) + "+"
+
+    def line(message=""):
+        for part in textwrap.wrap(str(message), width - 4, break_long_words=False) or [""]:
+            print("| " + part.ljust(width - 4) + " |")
+
+    def table_line(message):
+        if len(message) > width - 4:
+            raise ValueError("Result row exceeds terminal box width")
+        print("| " + message.ljust(width - 4) + " |")
+
+    print("\n" + border("="))
+    line(f"ROAD TRAFFIC AND RISK ASSESSMENT | {result.Scenario.iat[0]} | {year}")
+    print(border())
+    line(f"20 roads: {counts['Low']} Low, {counts['Medium']} Medium, {counts['High']} High risk")
+    line(f"The AI assessment differs from the threshold assessment for {int(frame.RF_Disagreement.sum())} roads.")
+    print(border())
+    line("HOW TO READ THIS RESULT")
+    line("2025 vehicles/day = reported vehicle count in the supplied dataset (source unverified).")
+    line("2025 PCU/day = that vehicle mix converted to passenger-car units; this is calculated, not measured.")
+    line(f"{year} PCU/day = projected daily traffic under the selected scenario. For 2025, this is the baseline, not a forecast.")
+    line("Capacity used = projected traffic divided by assumed road capacity; the capacity is not measured.")
+    line("Risk assessment = Low below 70%, Medium from 70% to below 95%, High at 95% or more.")
+    line("AI assessment = Random Forest label. It can disagree with the threshold-based risk assessment.")
+    print(border())
+    header = f"{'Road':<20} {'2025 vehicles':>13} {'2025 PCU':>10} {str(year) + ' PCU':>10} {'Cap. used':>9} {'Risk':>7} {'AI risk':>8} {'High from':>9}"
+    table_line(header)
+    print(border())
+    for _, road in frame.sort_values("VC_Ratio", ascending=False).iterrows():
+        first_high = "-" if pd.isna(road.First_High_Year) else str(int(road.First_High_Year))
+        row = (f"{road.Road_ID_Name:<20} {baseline.loc[road.Road_ID_Name, 'Total_Raw_Volume_Reported']:>13,.0f} "
+               f"{baseline.loc[road.Road_ID_Name, 'Road_PCU_Volume']:>10,.0f} "
+               f"{road.Road_PCU_Volume:>10,.0f} {road.VC_Ratio:>8.1%} "
+               f"{road.Risk_Level:>7} {road.RF_Risk_Level:>8} {first_high:>9}")
+        table_line(row)
+    print(border())
+    line("High from = first modeled year at 95% capacity or more; '-' means no crossing by 2035.")
+    line("These are scenario results for planning, not measured capacity or a prediction of physical road failure.")
+    print(border("="))
 
 
 def main():

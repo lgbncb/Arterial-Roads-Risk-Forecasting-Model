@@ -14,7 +14,7 @@ py -m venv .venv
 .\.venv\Scripts\python run_simulation.py
 ```
 
-The terminal runner uses Pandas, NumPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 5**. Enter a year from **2025 to 2035**, or press Enter to see 2035. After reading the table, answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
+The terminal runner uses Pandas, NumPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 5**. Enter a year from **2025 to 2035**, or press Enter to see 2035. One result box shows the supplied 2025 vehicle count, calculated 2025 PCU, scenario traffic, capacity use, threshold risk, AI risk, and first High year, with explanations inside the same box. Answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
 
 ## What each scenario asks
 
