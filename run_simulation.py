@@ -75,6 +75,8 @@ def show_results(result, year):
     frame = result.loc[result.Year.eq(year)].copy()
     baseline = result.loc[result.Year.eq(2025), ["Road_ID_Name", "Total_Raw_Volume_Reported", "Road_PCU_Volume"]].set_index("Road_ID_Name")
     counts = frame.Risk_Level.value_counts().reindex(["Low", "Medium", "High"], fill_value=0)
+    year_alert = "High" if counts["High"] else "Medium" if counts["Medium"] else "Low"
+    high_roads = frame.loc[frame.Risk_Level.eq("High"), "Road_ID_Name"].tolist()
     width = 108
 
     def border(char="-"):
@@ -90,20 +92,15 @@ def show_results(result, year):
         print("| " + message.ljust(width - 4) + " |")
 
     print("\n" + border("="))
-    line(f"ROAD TRAFFIC AND RISK ASSESSMENT | {result.Scenario.iat[0]} | {year}")
+    line(f"TRAFFIC RISK RESULT | {result.Scenario.iat[0]} | YEAR {year}")
     print(border())
-    line(f"20 roads: {counts['Low']} Low, {counts['Medium']} Medium, {counts['High']} High risk")
-    line(f"The AI assessment differs from the threshold assessment for {int(frame.RF_Disagreement.sum())} roads.")
+    line(f"AT A GLANCE: {year} is {year_alert.upper()} ALERT for this 20-road group.")
+    line(f"In {year}: {counts['High']} roads are High, {counts['Medium']} are Medium, and {counts['Low']} are Low.")
+    line("The group alert uses the highest road risk; it does not mean every road has that risk.")
+    line("High-risk roads this year: " + (", ".join(high_roads) if high_roads else "none"))
     print(border())
-    line("HOW TO READ THIS RESULT")
-    line("2025 vehicles/day = reported vehicle count in the supplied dataset (source unverified).")
-    line("2025 PCU/day = that vehicle mix converted to passenger-car units; this is calculated, not measured.")
-    line(f"{year} PCU/day = projected daily traffic under the selected scenario. For 2025, this is the baseline, not a forecast.")
-    line("Capacity used = projected traffic divided by assumed road capacity; the capacity is not measured.")
-    line("Risk assessment = Low below 70%, Medium from 70% to below 95%, High at 95% or more.")
-    line("AI assessment = Random Forest label. It can disagree with the threshold-based risk assessment.")
-    print(border())
-    header = f"{'Road':<20} {'2025 vehicles':>13} {'2025 PCU':>10} {str(year) + ' PCU':>10} {'Cap. used':>9} {'Risk':>7} {'AI risk':>8} {'High from':>9}"
+    line(f"ROAD-BY-ROAD RISK IN {year}")
+    header = f"{'Road':<20} {'2025 vehicles':>13} {'2025 PCU':>10} {str(year) + ' PCU':>10} {'Cap. used':>9} {str(year) + ' risk':>9} {'AI risk':>8} {'High from':>9}"
     table_line(header)
     print(border())
     for _, road in frame.sort_values("VC_Ratio", ascending=False).iterrows():
@@ -111,9 +108,17 @@ def show_results(result, year):
         row = (f"{road.Road_ID_Name:<20} {baseline.loc[road.Road_ID_Name, 'Total_Raw_Volume_Reported']:>13,.0f} "
                f"{baseline.loc[road.Road_ID_Name, 'Road_PCU_Volume']:>10,.0f} "
                f"{road.Road_PCU_Volume:>10,.0f} {road.VC_Ratio:>8.1%} "
-               f"{road.Risk_Level:>7} {road.RF_Risk_Level:>8} {first_high:>9}")
+               f"{road.Risk_Level:>9} {road.RF_Risk_Level:>8} {first_high:>9}")
         table_line(row)
     print(border())
+    line("WHAT THE COLUMNS MEAN")
+    line("2025 vehicles/day = reported vehicle count in the supplied dataset (source unverified).")
+    line("2025 PCU/day = that vehicle mix converted to passenger-car units; this is calculated, not measured.")
+    line(f"{year} PCU/day = projected daily traffic under the selected scenario. For 2025, this is the baseline, not a forecast.")
+    line("Capacity used = projected traffic divided by assumed road capacity; the capacity is not measured.")
+    line("Risk assessment = Low below 70%, Medium from 70% to below 95%, High at 95% or more.")
+    line("AI assessment = Random Forest label. It can disagree with the threshold-based risk assessment.")
+    line(f"The AI assessment differs from the threshold assessment for {int(frame.RF_Disagreement.sum())} roads in {year}.")
     line("High from = first modeled year at 95% capacity or more; '-' means no crossing by 2035.")
     line("These are scenario results for planning, not measured capacity or a prediction of physical road failure.")
     print(border("="))
