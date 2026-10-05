@@ -1,0 +1,81 @@
+Scenario,Road_ID_Name,Road_Type,VC_Ratio,Risk_Level,First_High_Year
+Baseline 4.5%,C-1_Recto,Circumferential,0.9939005195253303,High,2034
+Baseline 4.5%,C-2_A.Mendoza,Circumferential,0.9628412641647333,High,2035
+Baseline 4.5%,C-2_Pres.Quirino,Circumferential,1.335553686412698,High,2028
+Baseline 4.5%,C-3_Araneta_Ave,Circumferential,1.180256841839362,High,2031
+Baseline 4.5%,C-4_EDSA,Circumferential,1.552969421732896,High,2025
+Baseline 4.5%,C-5_CP_Garcia,Circumferential,1.3976722597144369,High,2027
+Baseline 4.5%,Marcos_Highway,Highway,1.45979142601898,High,2026
+Baseline 4.5%,McArthur_Highway,Highway,1.0560194626644492,High,2033
+Baseline 4.5%,R-10_Del_Pan,Radial,1.087078496083924,High,2032
+Baseline 4.5%,R-1_Roxas_Blvd,Radial,1.3666128248691454,High,2027
+Baseline 4.5%,R-2_Taft_Ave,Radial,1.2734345887070904,High,2029
+Baseline 4.5%,R-3_SSH,Radial,1.4908508137690555,High,2025
+Baseline 4.5%,R-4_Shaw_Blvd,Radial,1.1181378242899085,High,2032
+Baseline 4.5%,R-5_Ortigas_Ave,Radial,1.3044945757220934,High,2028
+Baseline 4.5%,R-6_Aurora_Blvd,Radial,1.1491976497918512,High,2031
+Baseline 4.5%,R-6_Magsaysay_Blvd,Radial,1.2423757266423143,High,2029
+Baseline 4.5%,R-7_Commonwealth,Radial,1.5219098952599883,High,2025
+Baseline 4.5%,R-7_Quezon_Ave,Radial,1.4287316716075376,High,2026
+Baseline 4.5%,R-8_A.Bonifacio,Radial,1.2113158922163088,High,2030
+Baseline 4.5%,R-9_Rizal_Ave,Radial,1.0249598860034117,High,2034
+Accelerated 7%,C-1_Recto,Circumferential,1.2589769821825483,High,2031
+Accelerated 7%,C-2_A.Mendoza,Circumferential,1.2196341236020976,High,2032
+Accelerated 7%,C-2_Pres.Quirino,Circumferential,1.6917501466501481,High,2027
+Accelerated 7%,C-3_Araneta_Ave,Circumferential,1.4950351345513668,High,2029
+Accelerated 7%,C-4_EDSA,Circumferential,1.9671513572895667,High,2025
+Accelerated 7%,C-5_CP_Garcia,Circumferential,1.7704359430820273,High,2026
+Accelerated 7%,Marcos_Highway,Highway,1.8491224906724628,High,2026
+Accelerated 7%,McArthur_Highway,Highway,1.337663247088625,High,2030
+Accelerated 7%,R-10_Del_Pan,Radial,1.3770058245355428,High,2030
+Accelerated 7%,R-1_Roxas_Blvd,Radial,1.731092857147737,High,2027
+Accelerated 7%,R-2_Taft_Ave,Radial,1.6130636859542038,High,2028
+Accelerated 7%,R-3_SSH,Radial,1.8884655169510922,High,2025
+Accelerated 7%,R-4_Shaw_Blvd,Radial,1.4163487753894801,High,2030
+Accelerated 7%,R-5_Ortigas_Ave,Radial,1.652407471323642,High,2027
+Accelerated 7%,R-6_Aurora_Blvd,Radial,1.4556923561698056,High,2029
+Accelerated 7%,R-6_Magsaysay_Blvd,Radial,1.5737213255628333,High,2028
+Accelerated 7%,R-7_Commonwealth,Radial,1.9278081552902806,High,2025
+Accelerated 7%,R-7_Quezon_Ave,Radial,1.8097789999427034,High,2026
+Accelerated 7%,R-8_A.Bonifacio,Radial,1.5343777334783688,High,2028
+Accelerated 7%,R-9_Rizal_Ave,Radial,1.298319981515874,High,2031
+Transit shift 20%,C-1_Recto,Circumferential,0.9367260350747829,Medium,
+Transit shift 20%,C-2_A.Mendoza,Circumferential,0.8753796340580007,Medium,
+Transit shift 20%,C-2_Pres.Quirino,Circumferential,1.2145948956017303,High,2030
+Transit shift 20%,C-3_Araneta_Ave,Circumferential,1.0324394730141726,High,2034
+Transit shift 20%,C-4_EDSA,Circumferential,1.3666055697138804,High,2025
+Transit shift 20%,C-5_CP_Garcia,Circumferential,1.2615647413164377,High,2029
+Transit shift 20%,Marcos_Highway,Highway,1.313192236076298,High,2028
+Transit shift 20%,McArthur_Highway,Highway,0.9935812600027312,High,2034
+Transit shift 20%,R-10_Del_Pan,Radial,1.0199172893697062,High,2034
+Transit shift 20%,R-1_Roxas_Blvd,Radial,1.2249985396055765,High,2030
+Transit shift 20%,R-2_Taft_Ave,Radial,1.1784878677793922,High,2031
+Transit shift 20%,R-3_SSH,Radial,1.3244951324565342,High,2025
+Transit shift 20%,R-4_Shaw_Blvd,Radial,1.0084984289249366,High,2034
+Transit shift 20%,R-5_Ortigas_Ave,Radial,1.194098022807597,High,2030
+Transit shift 20%,R-6_Aurora_Blvd,Radial,1.048502537747027,High,2033
+Transit shift 20%,R-6_Magsaysay_Blvd,Radial,1.1494267834710488,High,2031
+Transit shift 20%,R-7_Commonwealth,Radial,1.3731339950418358,High,2025
+Transit shift 20%,R-7_Quezon_Ave,Radial,1.283841665368638,High,2029
+Transit shift 20%,R-8_A.Bonifacio,Radial,1.1080101542508598,High,2032
+Transit shift 20%,R-9_Rizal_Ave,Radial,0.9603660158049543,High,2035
+EDSA/C-5 expansion 20%,C-1_Recto,Circumferential,0.9939005195253303,High,2034
+EDSA/C-5 expansion 20%,C-2_A.Mendoza,Circumferential,0.9628412641647333,High,2035
+EDSA/C-5 expansion 20%,C-2_Pres.Quirino,Circumferential,1.335553686412698,High,2028
+EDSA/C-5 expansion 20%,C-3_Araneta_Ave,Circumferential,1.180256841839362,High,2031
+EDSA/C-5 expansion 20%,C-4_EDSA,Circumferential,1.2941411847774134,High,2025
+EDSA/C-5 expansion 20%,C-5_CP_Garcia,Circumferential,1.164726883095364,High,2027
+EDSA/C-5 expansion 20%,Marcos_Highway,Highway,1.45979142601898,High,2026
+EDSA/C-5 expansion 20%,McArthur_Highway,Highway,1.0560194626644492,High,2033
+EDSA/C-5 expansion 20%,R-10_Del_Pan,Radial,1.087078496083924,High,2032
+EDSA/C-5 expansion 20%,R-1_Roxas_Blvd,Radial,1.3666128248691454,High,2027
+EDSA/C-5 expansion 20%,R-2_Taft_Ave,Radial,1.2734345887070904,High,2029
+EDSA/C-5 expansion 20%,R-3_SSH,Radial,1.4908508137690555,High,2025
+EDSA/C-5 expansion 20%,R-4_Shaw_Blvd,Radial,1.1181378242899085,High,2032
+EDSA/C-5 expansion 20%,R-5_Ortigas_Ave,Radial,1.3044945757220934,High,2028
+EDSA/C-5 expansion 20%,R-6_Aurora_Blvd,Radial,1.1491976497918512,High,2031
+EDSA/C-5 expansion 20%,R-6_Magsaysay_Blvd,Radial,1.2423757266423143,High,2029
+EDSA/C-5 expansion 20%,R-7_Commonwealth,Radial,1.5219098952599883,High,2025
+EDSA/C-5 expansion 20%,R-7_Quezon_Ave,Radial,1.4287316716075376,High,2026
+EDSA/C-5 expansion 20%,R-8_A.Bonifacio,Radial,1.2113158922163088,High,2030
+EDSA/C-5 expansion 20%,R-9_Rizal_Ave,Radial,1.0249598860034117,High,2034
