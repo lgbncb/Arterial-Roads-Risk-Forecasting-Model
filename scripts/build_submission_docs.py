@@ -193,20 +193,20 @@ def artifact_guide():
         ("aadt_model.py", "Data validation, PCU conversion, Random Forest evaluation, annual scenario engine"),
         ("python_source_code.pdf", "Readable PDF copy of both Python source files"),
         ("metro_manila_aadt_simulation_input_2020_2025.csv", "Required historical dataset, 120 road-year rows"),
-        ("requirements-cli.txt", "Terminal dependencies: NumPy, pandas, scikit-learn"),
+        ("requirements-cli.txt", "Terminal dependencies: NumPy, pandas, SciPy, scikit-learn"),
         ("README.md", "Run instructions and scenario descriptions"),
         ("sample_road_year_forecast.csv", "Sample output from four predefined scenarios"),
         ("sample_2035_summary.csv", "Compact sample 2035 output"),
     ], [2.7, 3.9])
 
     doc.add_heading("How to run the terminal simulation", 1)
-    para(doc, "Open PowerShell in the project folder. Use Python 3.12 or a compatible Python 3 installation. Run these commands in order:")
-    for cmd in ["py -m venv .venv", r".\.venv\Scripts\python -m pip install -r requirements-cli.txt", r".\.venv\Scripts\python run_simulation.py"]:
+    para(doc, "Open PowerShell in the project folder. Use Python 3.12 for the scientific Python wheels used by this project. Run these commands in order:")
+    for cmd in ["py -3.12 -m venv .venv", r".\.venv\Scripts\python -m pip install -r requirements-cli.txt", r".\.venv\Scripts\python run_simulation.py"]:
         p = doc.add_paragraph(cmd)
         for run in p.runs:
             run.font.name = "Consolas"
             run.font.size = Pt(9)
-    para(doc, "The program asks for scenario 1-5, then a year from 2025 through 2035; pressing Enter selects 2035. After the result box, answer y to export the entire scenario to outputs/terminal/<scenario>/ or n to return to the menu. Enter 0 at the menu to quit. The relative CSV path assumes the supplied project folder structure remains intact. If Python's Windows launcher is unavailable, install Python or use the full path to a compatible Python executable.")
+    para(doc, "The program asks for scenario 1-6. Option 6 shows a sensitivity comparison for the four predefined scenarios at 2025, 2030, and 2035. Options 1-5 then ask for a year from 2025 through 2035; pressing Enter selects 2035. After a scenario result, answer y to export the entire scenario to outputs/terminal/<scenario>/ or n to return to the menu. Enter 0 at the menu to quit. If an existing environment was created with Python 3.14, recreate .venv with the Python 3.12 command above; this avoids the Windows SciPy DLL import error shown by scikit-learn.")
 
     doc.add_heading("Core workflow and state updates", 1)
     for item in [
@@ -217,6 +217,7 @@ def artifact_guide():
         "For 2026-2035, apply the chosen annual growth and intervention assumptions, then recompute PCU and V/C.",
         "Calculate direct threshold risk, collect the separate Random Forest risk, and record the first High year.",
         "Display the selected-year risk box and optionally export the full annual result table.",
+        "Compare predefined scenarios at three milestone years as a sensitivity view; this is not a probability forecast.",
     ]:
         bullet(doc, item)
     para(doc, "The stored state includes Year, per-class vehicle counts, Road_PCU_Volume, Capacity_Limit, Risk_Level, RF_Risk_Level, and First_High_Year. The 2025 row is retained as baseline; the first growth step occurs in 2026. The terminal group's selected-year alert is the maximum per-road threshold risk, with class counts shown to avoid implying every road has the same label.")
