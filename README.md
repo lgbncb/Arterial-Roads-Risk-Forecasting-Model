@@ -6,19 +6,15 @@ It projects how much traffic the 20 included Metro Manila roads might carry each
 
 ## Run it in PowerShell
 
-On Windows, from the repository folder. Use Python 3.12 for the scientific Python wheels used by this project:
+On Windows, from the repository folder:
 
 ```powershell
-py -3.12 -m venv --clear .venv
+py -m venv .venv
 .\.venv\Scripts\python -m pip install -r requirements-cli.txt
 .\.venv\Scripts\python run_simulation.py
 ```
 
-Run setup commands from the repository root. `--clear` rebuilds an existing `.venv`. Check available versions with `py --list`; if Python 3.12 is missing, install it from [python.org](https://www.python.org/downloads/) and reopen PowerShell. To run the simulation again later, use only `.\.venv\Scripts\python run_simulation.py` from the repository root.
-
-If Windows reports **“An Application Control policy has blocked this file,”** it is preventing a compiled scientific Python library from loading. Reinstalling packages or changing the commands will not remove that restriction. Run the project on an IT-approved computer or ask your administrator to approve the Python scientific packages.
-
-The terminal runner uses Pandas, NumPy, SciPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 6**. Option 6 compares the four predefined scenarios at 2025, 2030, and 2035 as a simple sensitivity view. For options 1–5, enter a year from **2025 to 2035**, or press Enter to see 2035. The result box begins with an at-a-glance **Low, Medium, or High alert for the selected year**, the number of roads in each risk level, and the names of High-risk roads. The alert uses the **highest risk among the 20 roads**, so a High group alert does not mean every road is High. The same box then shows each road's risk for that year, the supplied 2025 vehicle count, calculated 2025 PCU, scenario traffic, capacity use, AI risk, and first High year. Answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
+The terminal runner uses Pandas, NumPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 5**. Enter a year from **2025 to 2035**, or press Enter to see 2035. The result box begins with an at-a-glance **Low, Medium, or High alert for the selected year**, the number of roads in each risk level, and the names of High-risk roads. The alert uses the **highest risk among the 20 roads**, so a High group alert does not mean every road is High. The same box then shows each road's risk for that year, the supplied 2025 vehicle count, calculated 2025 PCU, scenario traffic, capacity use, AI risk, and first High year. Answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
 
 ## What each scenario asks
 

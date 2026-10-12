@@ -14,12 +14,6 @@ CLASSES = ("Car", "PUJ", "UV", "Taxi", "PUB", "Truck", "Trailer", "MC", "Tricycl
 FEATURES = ["Road_PCU_Volume", "Capacity_Limit", "Year", "Road_Type"] + [f"Share_{c}" for c in CLASSES]
 RISK_ORDER = ["Low", "Medium", "High"]
 RING_ROADS = ("C-4_EDSA", "C-5_CP_Garcia")
-PREDEFINED_SCENARIOS = (
-    ("Baseline 4.5%", {"growth_rate": 0.045}),
-    ("Accelerated 7%", {"growth_rate": 0.07}),
-    ("Transit shift 20%", {"growth_rate": 0.045, "transfer_share": 0.20}),
-    ("EDSA/C-5 expansion 20%", {"growth_rate": 0.045, "capacity_increase": 0.20}),
-)
 
 
 def risk_from_ratio(ratio):
@@ -126,26 +120,3 @@ def save_outputs(results, directory):
     cols = ["Scenario", "Year", "Road_ID_Name", "Road_Type", "Road_PCU_Volume", "Capacity_Limit", "VC_Ratio", "Risk_Level", "RF_Risk_Level", "RF_Disagreement", "First_High_Year", "Capacity_Basis"]
     results[cols].to_csv(folder / "road_year_forecast.csv", index=False)
     results.loc[results.Year.eq(2035), ["Scenario", "Road_ID_Name", "Road_Type", "VC_Ratio", "Risk_Level", "First_High_Year"]].to_csv(folder / "scenario_2035_summary.csv", index=False)
-
-
-def compare_predefined_scenarios(history, model):
-    """Return a small planning comparison for the predefined scenarios.
-
-    The table is a sensitivity view of the stated assumptions. It is not a
-    probability forecast or a confidence interval.
-    """
-    rows = []
-    for name, parameters in PREDEFINED_SCENARIOS:
-        result = simulate(history, model, name, **parameters)
-        for year in (2025, 2030, 2035):
-            frame = result.loc[result.Year.eq(year)]
-            counts = frame.Risk_Level.value_counts().reindex(RISK_ORDER, fill_value=0)
-            rows.append({
-                "Scenario": name,
-                "Year": year,
-                "Low_Roads": int(counts["Low"]),
-                "Medium_Roads": int(counts["Medium"]),
-                "High_Roads": int(counts["High"]),
-                "Max_VC": float(frame.VC_Ratio.max()),
-            })
-    return pd.DataFrame(rows)

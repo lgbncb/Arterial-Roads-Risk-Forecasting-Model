@@ -2,12 +2,14 @@
 
 from pathlib import Path
 import re
-import sys
 import textwrap
+
+import pandas as pd
+
+from aadt_model import add_pcu_and_risk, fit_and_evaluate, save_outputs, simulate, validate_data
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "metro_manila_aadt_simulation_input_2020_2025.csv"
-pd = None
 
 
 def ask_choice(prompt, choices):
@@ -51,13 +53,12 @@ def choose_scenario():
         ("3", "Transit shift: 20% of cars", "What if some car users move to buses?"),
         ("4", "EDSA/C-5: 20% more capacity", "What if these roads gain capacity in 2028?"),
         ("5", "Your own growth rate", "What if traffic grows at a rate you choose?"),
-        ("6", "Compare scenarios", "See the sensitivity range at 2025, 2030, and 2035."),
         ("0", "Exit", "Close the simulation."),
     ]
     for number, label, goal in rows:
         print(f"{number:<5} {label:<31} {goal}")
     print("-" * 100)
-    choice = ask_choice("Enter a scenario number (0-6): ", set("0123456"))
+    choice = ask_choice("Enter a scenario number (0-5): ", set("012345"))
     scenarios = {
         "1": ("Baseline 4.5%", {"growth_rate": 0.045}),
         "2": ("Accelerated 7%", {"growth_rate": 0.07}),
@@ -67,26 +68,7 @@ def choose_scenario():
     if choice == "5":
         growth = ask_growth()
         return f"Custom growth {growth * 100:g}%", {"growth_rate": growth}
-    if choice == "6":
-        return "__compare__", {}
     return scenarios.get(choice)
-
-
-def show_comparison(comparison):
-    width = 92
-    border = "+" + "=" * (width - 2) + "+"
-    print("\n" + border)
-    print("| SCENARIO SENSITIVITY | planning comparison across stated assumptions".ljust(width - 1) + "|")
-    print("| Changes in risk counts when assumptions change; this is not a probability forecast.".ljust(width - 1) + "|")
-    print("|" + "-" * (width - 2) + "|")
-    print("| " + f"{'Scenario':<25} {'Year':>4} {'Low':>5} {'Medium':>7} {'High':>6} {'Max V/C':>9}".ljust(width - 4) + " |")
-    for _, row in comparison.iterrows():
-        line = f"{row.Scenario:<25} {int(row.Year):>4} {int(row.Low_Roads):>5} {int(row.Medium_Roads):>7} {int(row.High_Roads):>6} {row.Max_VC:>8.1%}"
-        print("| " + line.ljust(width - 4) + " |")
-    print("|" + "-" * (width - 2) + "|")
-    print("| Low <70%, Medium 70%-<95%, High >=95% of assumed capacity.".ljust(width - 1) + "|")
-    print("| Max V/C = busiest road traffic divided by assumed capacity.".ljust(width - 1) + "|")
-    print(border)
 
 
 def show_results(result, year):
@@ -143,29 +125,12 @@ def show_results(result, year):
 
 
 def main():
-    global pd
     print("\nMETRO MANILA ROAD TRAFFIC SIMULATION | 2025-2035")
     print("Goal: explore when projected daily traffic may approach or exceed road capacity on 20 roads.")
     print("How to use: choose a scenario number, choose a year, then decide whether to save the full forecast.")
     print("After each result, the menu returns so you can compare another scenario. Enter 0 to exit.")
     print("The results are planning examples because the supplied road capacities are synthetic estimates.\n")
-    if sys.version_info < (3, 12) or sys.version_info >= (3, 14):
-        print("This CLI is configured for Python 3.12. Recreate the environment with the clean setup commands in README.md.\n")
-        return
     print("Checking data and preparing the Random Forest risk model...")
-    try:
-        import pandas as pandas_module
-        from aadt_model import add_pcu_and_risk, compare_predefined_scenarios, fit_and_evaluate, save_outputs, simulate, validate_data
-    except (ImportError, OSError) as exc:
-        print("\nThe scientific Python packages could not be loaded.")
-        if "Application Control policy has blocked this file" in str(exc):
-            print("Windows Application Control blocked a compiled NumPy/SciPy file.")
-            print("Reinstalling packages will not remove this restriction. Run the simulation on an IT-approved computer or ask your administrator to approve the Python scientific packages.")
-        else:
-            print("The virtual environment may contain packages built for another Python version.")
-            print("From the repository root, recreate the environment with the three setup commands in README.md.")
-        return
-    pd = pandas_module
     history = add_pcu_and_risk(validate_data(pd.read_csv(DATA)))
     model, metrics, _, comparison = fit_and_evaluate(history)
     print(f"Model check: the Random Forest matched {metrics.loc['accuracy', 'support']:.1%} of 2024-2025 risk labels.")
@@ -176,14 +141,6 @@ def main():
             print("Goodbye.")
             return
         name, parameters = scenario
-        if name == "__compare__":
-            comparison = compare_predefined_scenarios(history, model)
-            show_comparison(comparison)
-            if ask_choice("Save this sensitivity table as CSV? (y/n): ", {"y", "n"}) == "y":
-                destination = ROOT / "outputs" / "terminal" / "scenario_comparison.csv"
-                comparison.to_csv(destination, index=False)
-                print(f"Saved {destination}")
-            continue
         result = simulate(history, model, name, **parameters)
         year = ask_year()
         show_results(result, year)
