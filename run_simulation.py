@@ -117,8 +117,13 @@ def show_results(result, year):
     line(f"{year} PCU/day = projected daily traffic under the selected scenario. For 2025, this is the baseline, not a forecast.")
     line("Capacity used = projected traffic divided by assumed road capacity; the capacity is not measured.")
     line("Risk assessment = Low below 70%, Medium from 70% to below 95%, High at 95% or more.")
-    line("AI assessment = Random Forest label. It can disagree with the threshold-based risk assessment.")
-    line(f"The AI assessment differs from the threshold assessment for {int(frame.RF_Disagreement.sum())} roads in {year}.")
+    ai_unavailable = frame.RF_Risk_Level.eq("N/A").all()
+    if ai_unavailable:
+        line("AI assessment = unavailable because Windows blocked a required scientific Python file.")
+        line("The risk levels shown are based on the capacity thresholds only; no AI result was produced.")
+    else:
+        line("AI assessment = Random Forest label. It can disagree with the threshold-based risk assessment.")
+        line(f"The AI assessment differs from the threshold assessment for {int(frame.RF_Disagreement.sum())} roads in {year}.")
     line("High from = first modeled year at 95% capacity or more; '-' means no crossing by 2035.")
     line("These are scenario results for planning, not measured capacity or a prediction of physical road failure.")
     print(border("="))
@@ -132,9 +137,16 @@ def main():
     print("The results are planning examples because the supplied road capacities are synthetic estimates.\n")
     print("Checking data and preparing the Random Forest risk model...")
     history = add_pcu_and_risk(validate_data(pd.read_csv(DATA)))
-    model, metrics, _, comparison = fit_and_evaluate(history)
-    print(f"Model check: the Random Forest matched {metrics.loc['accuracy', 'support']:.1%} of 2024-2025 risk labels.")
-    print("This measures risk-label matching, not accuracy of future traffic forecasts.")
+    try:
+        model, metrics, _, _ = fit_and_evaluate(history)
+    except (ImportError, OSError):
+        model = None
+        print("Random Forest is unavailable because Windows blocked a compiled scientific Python file.")
+        print("Continuing with the capacity-threshold assessment; the AI risk column will show N/A.")
+        print("For Random Forest results, run this project on an IT-approved computer or ask IT to approve the packages.")
+    else:
+        print(f"Model check: the Random Forest matched {metrics.loc['accuracy', 'support']:.1%} of 2024-2025 risk labels.")
+        print("This measures risk-label matching, not accuracy of future traffic forecasts.")
     while True:
         scenario = choose_scenario()
         if scenario is None:

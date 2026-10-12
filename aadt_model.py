@@ -4,11 +4,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
 
 CLASSES = ("Car", "PUJ", "UV", "Taxi", "PUB", "Truck", "Trailer", "MC", "Tricycle")
 FEATURES = ["Road_PCU_Volume", "Capacity_Limit", "Year", "Road_Type"] + [f"Share_{c}" for c in CLASSES]
@@ -63,6 +58,14 @@ def make_features(df):
 
 
 def fit_and_evaluate(history):
+    # Keep the data and threshold-based simulation usable if Windows blocks
+    # a compiled scikit-learn/SciPy extension on a managed device.
+    from sklearn.compose import ColumnTransformer
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import classification_report, confusion_matrix
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import OneHotEncoder
+
     train = history[history.Year <= 2023]
     test = history[history.Year >= 2024]
     prep = ColumnTransformer([
@@ -102,9 +105,9 @@ def simulate(history, model, name, growth_rate=0.045, transfer_share=0.0, capaci
             mask = state.Road_ID_Name.isin(RING_ROADS)
             state.loc[mask, "Capacity_Limit_PCU_Per_Day"] *= 1 + capacity_increase
         state = add_pcu_and_risk(state)
-        state["RF_Risk_Level"] = model.predict(make_features(state))
+        state["RF_Risk_Level"] = model.predict(make_features(state)) if model is not None else "N/A"
         state["Risk_Level"] = state["Rule_Risk_Level"]
-        state["RF_Disagreement"] = state.RF_Risk_Level.ne(state.Risk_Level)
+        state["RF_Disagreement"] = state.RF_Risk_Level.ne(state.Risk_Level) if model is not None else pd.NA
         state["Scenario"] = name
         state["Capacity_Basis"] = "Synthetic scenario, not measured"
         output.append(state)

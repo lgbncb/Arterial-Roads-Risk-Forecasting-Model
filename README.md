@@ -16,6 +16,8 @@ py -m venv .venv
 
 The terminal runner uses Pandas, NumPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 5**. Enter a year from **2025 to 2035**, or press Enter to see 2035. The result box begins with an at-a-glance **Low, Medium, or High alert for the selected year**, the number of roads in each risk level, and the names of High-risk roads. The alert uses the **highest risk among the 20 roads**, so a High group alert does not mean every road is High. The same box then shows each road's risk for that year, the supplied 2025 vehicle count, calculated 2025 PCU, scenario traffic, capacity use, AI risk, and first High year. Answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
 
+If Windows Application Control blocks a compiled scikit-learn/SciPy file, the CLI continues with the threshold-based risk results so the road table is still available. In that case, the AI-risk column shows **N/A** and the CLI explains that no Random Forest result was produced. Ask your administrator to approve the scientific Python packages, or run the project on an IT-approved computer, to use the Random Forest assessment.
+
 ## What each scenario asks
 
 - **1. Baseline:** If traffic grows 4.5% each year and capacity stays fixed, when might roads reach high usage?
