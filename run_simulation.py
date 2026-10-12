@@ -4,7 +4,6 @@ from pathlib import Path
 import re
 import sys
 import textwrap
-import traceback
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "metro_manila_aadt_simulation_input_2020_2025.csv"
@@ -158,19 +157,13 @@ def main():
         import pandas as pandas_module
         from aadt_model import add_pcu_and_risk, compare_predefined_scenarios, fit_and_evaluate, save_outputs, simulate, validate_data
     except (ImportError, OSError) as exc:
-        diagnostic = "".join(traceback.format_exception(exc))
         print("\nThe scientific Python packages could not be loaded.")
-        if "Application Control policy has blocked this file" in diagnostic:
+        if "Application Control policy has blocked this file" in str(exc):
             print("Windows Application Control blocked a compiled NumPy/SciPy file.")
             print("Reinstalling packages will not remove this restriction. Run the simulation on an IT-approved computer or ask your administrator to approve the Python scientific packages.")
         else:
             print("The virtual environment may contain packages built for another Python version.")
-            print("From the repository root, recreate it cleanly with these PowerShell commands:")
-            print("  py -3.12 -m venv --clear .venv")
-            print("  .\\.venv\\Scripts\\python -m pip install --no-cache-dir --force-reinstall -r requirements-cli.txt")
-            print("  .\\.venv\\Scripts\\python -c \"import numpy, pandas, scipy, sklearn; print('Dependencies loaded')\"")
-        print("Technical detail:")
-        print(diagnostic)
+            print("From the repository root, recreate the environment with the three setup commands in README.md.")
         return
     pd = pandas_module
     history = add_pcu_and_risk(validate_data(pd.read_csv(DATA)))
