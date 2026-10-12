@@ -9,12 +9,15 @@ It projects how much traffic the 20 included Metro Manila roads might carry each
 On Windows, from the repository folder. Use Python 3.12 for the scientific Python wheels used by this project:
 
 ```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\python -m pip install -r requirements-cli.txt
+py -3.12 -m venv --clear .venv
+.\.venv\Scripts\python -m pip install --no-cache-dir --force-reinstall -r requirements-cli.txt
+.\.venv\Scripts\python -c "import numpy, pandas, scipy, sklearn; print('Dependencies loaded')"
 .\.venv\Scripts\python run_simulation.py
 ```
 
-Check the available Python versions with `py --list`. If `py -3.12` is not listed, install Python 3.12 from [python.org](https://www.python.org/downloads/) and reopen PowerShell. If an existing `.venv` was created with Python 3.14, remove that `.venv` folder and recreate it with the commands above. This avoids the Windows SciPy DLL error that can occur when scikit-learn starts.
+Run these commands from the repository root. Check available versions with `py --list`; if Python 3.12 is missing, install it from [python.org](https://www.python.org/downloads/) and reopen PowerShell. The `--clear` and `--force-reinstall` options replace stale packages, including the reported Python 3.14 NumPy files left in a Python 3.12 environment. Continue only after the dependency check prints `Dependencies loaded`.
+
+If the dependency check reports **“An Application Control policy has blocked this file,”** Windows is preventing NumPy or SciPy from loading. Reinstalling packages will not remove that restriction. Run the project on an IT-approved computer or ask your administrator to approve the Python scientific packages for this project.
 
 The terminal runner uses Pandas, NumPy, SciPy, and scikit-learn. After it starts, enter a **scenario number from 1 to 6**. Option 6 compares the four predefined scenarios at 2025, 2030, and 2035 as a simple sensitivity view. For options 1–5, enter a year from **2025 to 2035**, or press Enter to see 2035. The result box begins with an at-a-glance **Low, Medium, or High alert for the selected year**, the number of roads in each risk level, and the names of High-risk roads. The alert uses the **highest risk among the 20 roads**, so a High group alert does not mean every road is High. The same box then shows each road's risk for that year, the supplied 2025 vehicle count, calculated 2025 PCU, scenario traffic, capacity use, AI risk, and first High year. Answer **y** to save all years of that scenario as CSV files under `outputs/terminal/`, or **n** to return to the menu. Enter **0** at the scenario menu to quit. The optional notebook remains available for plots and detailed evaluation, using `requirements.txt`.
 

@@ -4,11 +4,11 @@ from pathlib import Path
 import re
 import sys
 import textwrap
-
-import pandas as pd
+import traceback
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "metro_manila_aadt_simulation_input_2020_2025.csv"
+pd = None
 
 
 def ask_choice(prompt, choices):
@@ -144,25 +144,35 @@ def show_results(result, year):
 
 
 def main():
+    global pd
     print("\nMETRO MANILA ROAD TRAFFIC SIMULATION | 2025-2035")
     print("Goal: explore when projected daily traffic may approach or exceed road capacity on 20 roads.")
     print("How to use: choose a scenario number, choose a year, then decide whether to save the full forecast.")
     print("After each result, the menu returns so you can compare another scenario. Enter 0 to exit.")
     print("The results are planning examples because the supplied road capacities are synthetic estimates.\n")
-    if sys.version_info >= (3, 14):
-        print("This CLI requires a supported scientific-Python runtime. Please recreate the environment with Python 3.12:")
-        print("  py -3.12 -m venv .venv")
-        print("  .\\.venv\\Scripts\\python -m pip install -r requirements-cli.txt")
-        print("Then run this command again. Python 3.14 may block the SciPy DLL used by scikit-learn on Windows.\n")
+    if sys.version_info < (3, 12) or sys.version_info >= (3, 14):
+        print("This CLI is configured for Python 3.12. Recreate the environment with the clean setup commands in README.md.\n")
         return
     print("Checking data and preparing the Random Forest risk model...")
     try:
+        import pandas as pandas_module
         from aadt_model import add_pcu_and_risk, compare_predefined_scenarios, fit_and_evaluate, save_outputs, simulate, validate_data
     except (ImportError, OSError) as exc:
+        diagnostic = "".join(traceback.format_exception(exc))
         print("\nThe scientific Python packages could not be loaded.")
-        print("On Windows, recreate the environment with Python 3.12 and run the installation commands in README.md.")
-        print(f"Technical detail: {exc}")
+        if "Application Control policy has blocked this file" in diagnostic:
+            print("Windows Application Control blocked a compiled NumPy/SciPy file.")
+            print("Reinstalling packages will not remove this restriction. Run the simulation on an IT-approved computer or ask your administrator to approve the Python scientific packages.")
+        else:
+            print("The virtual environment may contain packages built for another Python version.")
+            print("From the repository root, recreate it cleanly with these PowerShell commands:")
+            print("  py -3.12 -m venv --clear .venv")
+            print("  .\\.venv\\Scripts\\python -m pip install --no-cache-dir --force-reinstall -r requirements-cli.txt")
+            print("  .\\.venv\\Scripts\\python -c \"import numpy, pandas, scipy, sklearn; print('Dependencies loaded')\"")
+        print("Technical detail:")
+        print(diagnostic)
         return
+    pd = pandas_module
     history = add_pcu_and_risk(validate_data(pd.read_csv(DATA)))
     model, metrics, _, comparison = fit_and_evaluate(history)
     print(f"Model check: the Random Forest matched {metrics.loc['accuracy', 'support']:.1%} of 2024-2025 risk labels.")

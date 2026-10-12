@@ -200,13 +200,13 @@ def artifact_guide():
     ], [2.7, 3.9])
 
     doc.add_heading("How to run the terminal simulation", 1)
-    para(doc, "Open PowerShell in the project folder. Use Python 3.12 for the scientific Python wheels used by this project. Run these commands in order:")
-    for cmd in ["py -3.12 -m venv .venv", r".\.venv\Scripts\python -m pip install -r requirements-cli.txt", r".\.venv\Scripts\python run_simulation.py"]:
+    para(doc, "Open PowerShell in the repository root and use Python 3.12. The clean environment and force-reinstall commands below replace stale wheels built for another Python version:")
+    for cmd in ["py -3.12 -m venv --clear .venv", r".\.venv\Scripts\python -m pip install --no-cache-dir --force-reinstall -r requirements-cli.txt", r".\.venv\Scripts\python -c \"import numpy, pandas, scipy, sklearn; print('Dependencies loaded')\"", r".\.venv\Scripts\python run_simulation.py"]:
         p = doc.add_paragraph(cmd)
         for run in p.runs:
             run.font.name = "Consolas"
             run.font.size = Pt(9)
-    para(doc, "The program asks for scenario 1-6. Option 6 shows a sensitivity comparison for the four predefined scenarios at 2025, 2030, and 2035. Options 1-5 then ask for a year from 2025 through 2035; pressing Enter selects 2035. After a scenario result, answer y to export the entire scenario to outputs/terminal/<scenario>/ or n to return to the menu. Enter 0 at the menu to quit. If an existing environment was created with Python 3.14, recreate .venv with the Python 3.12 command above; this avoids the Windows SciPy DLL import error shown by scikit-learn.")
+    para(doc, "The dependency check must print Dependencies loaded before starting the program. If Windows reports that an Application Control policy blocked a NumPy or SciPy file, package reinstalls cannot remove that restriction; use an IT-approved computer or ask the administrator to approve the scientific packages. The program asks for scenario 1-6. Option 6 shows a sensitivity comparison for the four predefined scenarios at 2025, 2030, and 2035. Options 1-5 then ask for a year from 2025 through 2035; pressing Enter selects 2035. After a scenario result, answer y to export the entire scenario to outputs/terminal/<scenario>/ or n to return to the menu. Enter 0 at the menu to quit.")
 
     doc.add_heading("Core workflow and state updates", 1)
     for item in [
